@@ -270,7 +270,6 @@ async def predict(
             float(probs[i]),
             4
         )
-
     # ======================================================
     # GEMINI EXPLANATION
     # ======================================================
@@ -294,34 +293,43 @@ async def predict(
     a final medical diagnosis.
     """
 
-    response = llm.generate_content(
-        prompt
+    try:
+
+        response = llm.generate_content(
+            prompt
+        )
+
+        explanation = response.text
+
+    except Exception as e:
+
+        explanation = (
+            f"Unable to generate explanation: {str(e)}"
+        )
+
+    # ======================================================
+    # GENERATE GRAD CAM
+    # ======================================================
+
+    heatmap = generate_gradcam(
+        model,
+        img
     )
 
-    explanation = response.text
-    # ======================================================
-# GENERATE GRAD CAM
-# ======================================================
+    heatmap = Image.fromarray(
+        heatmap
+    )
 
-heatmap = generate_gradcam(
-    model,
-    img
-)
+    buffer = BytesIO()
 
-heatmap = Image.fromarray(
-    heatmap
-)
+    heatmap.save(
+        buffer,
+        format="PNG"
+    )
 
-buffer = BytesIO()
-
-heatmap.save(
-    buffer,
-    format="PNG"
-)
-
-gradcam = base64.b64encode(
-    buffer.getvalue()
-).decode()
+    gradcam = base64.b64encode(
+        buffer.getvalue()
+    ).decode()
 
     # ======================================================
     # RETURN JSON
@@ -337,7 +345,25 @@ gradcam = base64.b64encode(
 
         "explanation":
             explanation,
-        "gradcam":
-            gradcam    
 
+        "gradcam":
+            gradcam
+    }
+    # ======================================================
+    # RETURN JSON
+    # ======================================================
+
+    return {
+
+        "predicted_diseases":
+            predicted_diseases,
+
+        "probabilities":
+            probabilities,
+
+        "explanation":
+            explanation,
+
+        "gradcam":
+            gradcam
     }
