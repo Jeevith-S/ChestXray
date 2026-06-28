@@ -16,3 +16,4 @@ python-dotenv
 grad-cam
 opencv-python-headless
 matplotlib
+opencv-python-headless
