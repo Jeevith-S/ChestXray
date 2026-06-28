@@ -28,6 +28,8 @@ st.markdown("""
 
 ✅ ResNet18 Disease Detection
 
+✅ Gemini Medical Explanation
+
 ✅ Professional AI Architecture
 
 """)
@@ -44,9 +46,11 @@ with st.sidebar:
 
     **Frontend:** Streamlit
 
-    **Backend:** FastAPI
+    **Backend:** FastAPI (Railway)
 
     **Deep Learning Model:** ResNet18
+
+    **LLM:** Gemini
 
     **Diseases:** 15 Chest Diseases
 
@@ -79,6 +83,10 @@ if uploaded_file:
 
     col1, col2 = st.columns(2)
 
+    # ======================================================
+    # SHOW IMAGE
+    # ======================================================
+
     with col1:
 
         st.image(
@@ -89,6 +97,10 @@ if uploaded_file:
 
             use_container_width=True
         )
+
+    # ======================================================
+    # SEND TO FASTAPI
+    # ======================================================
 
     with st.spinner(
 
@@ -108,9 +120,11 @@ if uploaded_file:
 
         try:
 
+            API_URL = "https://chestxray-production.up.railway.app/predict"
+
             response = requests.post(
 
-                "http://127.0.0.1:8000/predict",
+                API_URL,
 
                 files=files
             )
@@ -121,18 +135,27 @@ if uploaded_file:
 
             st.error(
 
-                "❌ Cannot connect to FastAPI Backend"
+                f"❌ Cannot connect to FastAPI Backend\n\n{e}"
             )
 
             st.stop()
 
-    predicted_diseases = result[
-        "predicted_diseases"
-    ]
+    # ======================================================
+    # GET RESULTS
+    # ======================================================
 
-    probabilities = result[
-        "probabilities"
-    ]
+    predicted_diseases = result.get(
+        "predicted_diseases", []
+    )
+
+    probabilities = result.get(
+        "probabilities", {}
+    )
+
+    explanation = result.get(
+        "explanation",
+        "No explanation received."
+    )
 
     # ======================================================
     # PROBABILITY TABLE
@@ -187,6 +210,43 @@ if uploaded_file:
     for disease in predicted_diseases:
 
         st.success(disease)
+
+    # ======================================================
+    # GEMINI EXPLANATION
+    # ======================================================
+
+    st.subheader(
+
+        "🤖 AI Medical Explanation"
+    )
+
+    st.write(explanation)
+    # ======================================================
+# SHOW GRAD CAM
+# ======================================================
+
+if "gradcam" in result:
+
+    import base64
+    from io import BytesIO
+
+    st.subheader(
+        "🔥 Grad-CAM Visualization"
+    )
+
+    gradcam_bytes = base64.b64decode(
+        result["gradcam"]
+    )
+
+    gradcam_image = Image.open(
+        BytesIO(gradcam_bytes)
+    )
+
+    st.image(
+        gradcam_image,
+        caption="Important regions influencing prediction",
+        use_container_width=True
+    )
 
     # ======================================================
     # SAVE HISTORY
