@@ -225,29 +225,28 @@ if uploaded_file:
 # SHOW GRAD CAM
 # ======================================================
 
-if "gradcam" in result:
+ if "gradcam" in result:
 
-    import base64
-    from io import BytesIO
+        import base64
+        from io import BytesIO
 
-    st.subheader(
-        "🔥 Grad-CAM Visualization"
-    )
+        st.subheader(
+            "🔥 Grad-CAM Visualization"
+        )
 
-    gradcam_bytes = base64.b64decode(
-        result["gradcam"]
-    )
+        gradcam_bytes = base64.b64decode(
+            result["gradcam"]
+        )
 
-    gradcam_image = Image.open(
-        BytesIO(gradcam_bytes)
-    )
+        gradcam_image = Image.open(
+            BytesIO(gradcam_bytes)
+        )
 
-    st.image(
-        gradcam_image,
-        caption="Important regions influencing prediction",
-        use_container_width=True
-    )
-
+        st.image(
+            gradcam_image,
+            caption="Regions responsible for prediction",
+            use_container_width=True
+        )
     # ======================================================
     # SAVE HISTORY
     # ======================================================
