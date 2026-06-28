@@ -128,6 +128,7 @@ if uploaded_file:
             )
 
             result = response.json()
+            st.write(result)
 
         except Exception as e:
 
