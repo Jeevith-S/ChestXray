@@ -4,6 +4,8 @@ from PIL import Image
 import pandas as pd
 from datetime import datetime
 import os
+import base64
+from io import BytesIO
 
 # ==========================================================
 # PAGE CONFIG
@@ -30,6 +32,8 @@ st.markdown("""
 
 ✅ Gemini Medical Explanation
 
+✅ Grad-CAM Visualization
+
 ✅ Professional AI Architecture
 
 """)
@@ -44,17 +48,17 @@ with st.sidebar:
 
     st.write("""
 
-    **Frontend:** Streamlit
+**Frontend:** Streamlit
 
-    **Backend:** FastAPI (Railway)
+**Backend:** FastAPI
 
-    **Deep Learning Model:** ResNet18
+**Deep Learning Model:** ResNet18
 
-    **LLM:** Gemini
+**LLM:** Gemini
 
-    **Diseases:** 15 Chest Diseases
+**Diseases:** 15 Chest Diseases
 
-    """)
+""")
 
     st.info(
         "Upload a Chest X-ray image for analysis."
@@ -90,11 +94,8 @@ if uploaded_file:
     with col1:
 
         st.image(
-
             image,
-
             caption="Uploaded X-ray",
-
             use_container_width=True
         )
 
@@ -103,7 +104,6 @@ if uploaded_file:
     # ======================================================
 
     with st.spinner(
-
             "🔍 Sending image to FastAPI..."):
 
         files = {
@@ -123,9 +123,7 @@ if uploaded_file:
             API_URL = "https://chestxray-production.up.railway.app/predict"
 
             response = requests.post(
-
                 API_URL,
-
                 files=files
             )
 
@@ -134,7 +132,6 @@ if uploaded_file:
         except Exception as e:
 
             st.error(
-
                 f"❌ Cannot connect to FastAPI Backend\n\n{e}"
             )
 
@@ -164,37 +161,28 @@ if uploaded_file:
     prob_df = pd.DataFrame({
 
         "Disease":
-
             list(probabilities.keys()),
 
         "Probability (%)":
-
             [
-
                 round(v * 100, 2)
-
                 for v in probabilities.values()
             ]
     })
 
     prob_df = prob_df.sort_values(
-
         "Probability (%)",
-
         ascending=False
     )
 
     with col2:
 
         st.subheader(
-
             "📊 Disease Probabilities"
         )
 
         st.dataframe(
-
             prob_df,
-
             use_container_width=True
         )
 
@@ -203,7 +191,6 @@ if uploaded_file:
     # ======================================================
 
     st.subheader(
-
         "🩺 Predicted Diseases"
     )
 
@@ -216,37 +203,35 @@ if uploaded_file:
     # ======================================================
 
     st.subheader(
-
         "🤖 AI Medical Explanation"
     )
 
     st.write(explanation)
+
     # ======================================================
-# SHOW GRAD CAM
-# ======================================================
+    # GRAD-CAM VISUALIZATION
+    # ======================================================
 
-if "gradcam" in result:
+    if "gradcam" in result:
 
-    import base64
-    from io import BytesIO
+        st.subheader(
+            "🔥 Grad-CAM Visualization"
+        )
 
-    st.subheader(
-        "🔥 Grad-CAM Visualization"
-    )
+        gradcam_bytes = base64.b64decode(
+            result["gradcam"]
+        )
 
-    gradcam_bytes = base64.b64decode(
-        result["gradcam"]
-    )
+        gradcam_image = Image.open(
+            BytesIO(gradcam_bytes)
+        )
 
-    gradcam_image = Image.open(
-        BytesIO(gradcam_bytes)
-    )
+        st.image(
+            gradcam_image,
+            caption="Important Regions Influencing Prediction",
+            use_container_width=True
+        )
 
-    st.image(
-        gradcam_image,
-        caption="Regions responsible for prediction",
-        use_container_width=True
-    )
     # ======================================================
     # SAVE HISTORY
     # ======================================================
@@ -254,19 +239,16 @@ if "gradcam" in result:
     history = pd.DataFrame({
 
         "Timestamp": [
-
             datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
         ],
 
         "Image_Name": [
-
             uploaded_file.name
         ],
 
         "Predicted_Diseases": [
-
             ", ".join(
                 predicted_diseases
             )
@@ -274,26 +256,20 @@ if "gradcam" in result:
     })
 
     if os.path.exists(
-
             "prediction_history.csv"
     ):
 
         old = pd.read_csv(
-
             "prediction_history.csv"
         )
 
         history = pd.concat(
-
             [old, history],
-
             ignore_index=True
         )
 
     history.to_csv(
-
         "prediction_history.csv",
-
         index=False
     )
 
@@ -302,7 +278,6 @@ if "gradcam" in result:
     # ======================================================
 
     csv = prob_df.to_csv(
-
         index=False
     )
 
@@ -323,15 +298,15 @@ if "gradcam" in result:
 
     st.warning("""
 
-    ⚠️ Disclaimer
+⚠️ Disclaimer
 
-    This AI system is intended for educational
-    and assistive purposes only.
+This AI system is intended for educational
+and assistive purposes only.
 
-    The predictions generated by this application
-    should not be considered a final medical diagnosis.
+The predictions generated by this application
+should not be considered a final medical diagnosis.
 
-    Always consult a qualified radiologist or
-    healthcare professional.
+Always consult a qualified radiologist or
+healthcare professional.
 
-    """)
+""")
