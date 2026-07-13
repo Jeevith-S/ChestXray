@@ -1,0 +1,16 @@
+.env
+
+__pycache__/
+
+*.pyc
+
+myenv/
+
+venv/
+
+prediction_history.csv
+
+
+*.faiss
+
+*.pkl
