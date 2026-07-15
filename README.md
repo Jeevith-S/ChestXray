@@ -1,0 +1,298 @@
+# 🩺 AI Chest X-ray Disease Detection using Deep Learning, Grad-CAM & RAG
+
+## 📌 Project Overview
+
+This project is an AI-powered Chest X-ray Disease Detection system that predicts **14 thoracic diseases** from Chest X-ray images using a **DenseNet121** deep learning model. The system also provides:
+
+- 🔥 Grad-CAM visualization for explainability
+- 🤖 Gemini AI-generated medical explanation
+- 📚 Retrieval-Augmented Generation (RAG) using FAISS
+- 🚀 FastAPI backend
+- 🎨 Streamlit frontend
+
+> **Disclaimer:** This application is for educational and research purposes only and should not be used as a medical diagnosis tool.
+
+---
+
+# 📂 Project Structure
+
+```
+ChestXray/
+│
+├── backend/
+│   ├── api.py
+│   ├── predict.py
+│   ├── model.py
+│   ├── preprocess.py
+│   ├── gradcam.py
+│   ├── rag.py
+│   ├── build_rag.py
+│   ├── config.py
+│   ├── best_densenet121.pth
+│   ├── medical_chunks.pkl
+│   ├── medical_index.faiss
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── app.py
+│   ├── config.py
+│   └── requirements.txt
+│
+├── Dockerfile
+├── runtime.txt
+├── requirements.txt
+└── README.md
+```
+
+---
+
+# 🩻 Diseases Detected
+
+- Atelectasis
+- Cardiomegaly
+- Consolidation
+- Edema
+- Effusion
+- Emphysema
+- Fibrosis
+- Infiltration
+- Mass
+- No Finding
+- Nodule
+- Pleural Thickening
+- Pneumonia
+- Pneumothorax
+
+---
+
+# 🚀 Features
+
+✅ Multi-label Chest X-ray Disease Detection
+
+✅ DenseNet121 Transfer Learning
+
+✅ Patient-wise Data Split
+
+✅ Threshold Optimization
+
+✅ Grad-CAM Explainability
+
+✅ FastAPI REST API
+
+✅ Streamlit Web Interface
+
+✅ Retrieval-Augmented Generation (RAG)
+
+✅ Gemini AI Medical Explanation
+
+✅ Prediction Report Download
+
+---
+
+# 🧠 Model
+
+**Architecture**
+
+- DenseNet121 (Transfer Learning)
+
+**Loss Function**
+
+- BCEWithLogitsLoss
+
+**Optimizer**
+
+- Adam
+
+**Input Size**
+
+- 224 × 224 RGB
+
+**Output**
+
+- 14 Disease Probabilities
+
+---
+
+# 📊 Model Performance
+
+| Metric | Score |
+|---------|------:|
+| Mean AUROC | **0.807** |
+| Mean PR-AUC | **0.292** |
+| Mean Precision | **0.323** |
+| Mean Recall | **0.410** |
+| Mean F1 Score | **0.357** |
+
+---
+
+# 📈 Per Disease Performance
+
+| Disease | Threshold | AUROC | PR-AUC | F1 Score |
+|----------|:---------:|:------:|:------:|:--------:|
+| Atelectasis | 0.56 | 0.804 | 0.361 | 0.408 |
+| Cardiomegaly | 0.63 | 0.889 | 0.309 | 0.409 |
+| Consolidation | 0.49 | 0.761 | 0.111 | 0.195 |
+| Edema | 0.49 | 0.901 | 0.191 | 0.281 |
+| Effusion | 0.58 | 0.861 | 0.489 | 0.512 |
+| Emphysema | 0.50 | **0.935** | 0.465 | 0.527 |
+| Fibrosis | 0.43 | 0.796 | 0.079 | 0.165 |
+| Infiltration | 0.56 | 0.686 | 0.326 | 0.388 |
+| Mass | 0.56 | 0.836 | 0.301 | 0.386 |
+| No Finding | 0.47 | 0.764 | **0.775** | **0.747** |
+| Nodule | 0.53 | 0.759 | 0.234 | 0.313 |
+| Pleural Thickening | 0.48 | 0.792 | 0.137 | 0.227 |
+| Pneumonia | 0.42 | 0.653 | 0.030 | 0.069 |
+| Pneumothorax | 0.55 | 0.859 | 0.277 | 0.356 |
+
+---
+
+# 🔥 Grad-CAM
+
+Grad-CAM is used to visualize the regions of the Chest X-ray that influenced the model's prediction, improving transparency and interpretability.
+
+---
+
+# 🤖 AI Medical Explanation
+
+The predicted diseases are passed to the Gemini AI model, which generates:
+
+- Medical explanation
+- Disease summary
+- Educational information
+
+---
+
+# 📚 Retrieval-Augmented Generation (RAG)
+
+Medical knowledge is retrieved from a curated reference document using:
+
+- Sentence Transformers
+- FAISS Vector Database
+- Semantic Search
+
+The retrieved context is then provided to Gemini AI to generate grounded responses.
+
+---
+
+# 🛠️ Tech Stack
+
+### Deep Learning
+
+- PyTorch
+- Torchvision
+
+### Backend
+
+- FastAPI
+- Uvicorn
+
+### Frontend
+
+- Streamlit
+
+### Explainability
+
+- Grad-CAM
+
+### RAG
+
+- FAISS
+- Sentence Transformers
+- Google Gemini API
+
+### Other Libraries
+
+- NumPy
+- Pandas
+- Pillow
+- OpenCV
+- Matplotlib
+
+---
+
+# 📊 Dataset
+
+**NIH ChestX-ray14 Dataset**
+
+- 112,120 Chest X-ray Images
+- 14 Thoracic Disease Labels
+- Multi-label Classification
+
+Dataset Source:
+
+https://www.kaggle.com/datasets/nih-chest-xrays/data
+
+---
+
+# ⚙️ Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/Jeevith-S/ChestXray.git
+
+cd ChestXray
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# ▶️ Run Backend
+
+```bash
+cd backend
+
+uvicorn api:app --reload
+```
+
+---
+
+# ▶️ Run Frontend
+
+```bash
+cd frontend
+
+streamlit run app.py
+```
+
+---
+
+# 📷 Application Workflow
+
+1. Upload Chest X-ray Image
+2. Image Preprocessing
+3. DenseNet121 Prediction
+4. Threshold-based Disease Selection
+5. Grad-CAM Generation
+6. Retrieve Medical Knowledge (RAG)
+7. Gemini AI Explanation
+8. Display Results
+9. Download Prediction Report
+
+---
+
+# 🎯 Future Improvements
+
+- Docker Deployment
+- Railway/Render Deployment
+- User Authentication
+- PDF Report Generation
+- DICOM Image Support
+- Improved Clinical Decision Support
+
+---
+
+
+
+# ⚠️ Disclaimer
+
+This project is intended for educational and research purposes only.
+
+The predictions generated by this system should not be considered as a final medical diagnosis.
+
+Always consult a qualified radiologist or healthcare professional for clinical decisions.
